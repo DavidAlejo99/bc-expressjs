@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-08-19T00:50:12.423Z",
+  "appliedFilter": "Jardín",
+  "summary": {
+    "total": 2,
+    "active": 2,
+    "inactive": 0,
+    "averageMonthlyFee": 360000,
+    "highestFee": {
+      "id": "c009",
+      "name": "Luciana Vargas",
+      "group": "Jardín",
+      "monthlyFee": 360000,
+      "active": true
+    },
+    "lowestFee": {
+      "id": "c009",
+      "name": "Luciana Vargas",
+      "group": "Jardín",
+      "monthlyFee": 360000,
+      "active": true
+    },
+    "groups": [
+      "Jardín"
+    ]
+  },
+  "children": [
+    {
+      "id": "c009",
+      "name": "Luciana Vargas",
+      "group": "Jardín",
+      "monthlyFee": 360000,
+      "active": true
+    },
+    {
+      "id": "c010",
+      "name": "Santiago Molina",
+      "group": "Jardín",
+      "monthlyFee": 360000,
+      "active": true
+    }
+  ]
+}

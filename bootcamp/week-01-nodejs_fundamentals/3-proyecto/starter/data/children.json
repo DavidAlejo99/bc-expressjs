@@ -1,0 +1,14 @@
+[
+  { "id": "c001", "name": "Mariana Gómez", "group": "Sala Cuna", "monthlyFee": 450000, "active": true },
+  { "id": "c002", "name": "Samuel Rojas", "group": "Sala Cuna", "monthlyFee": 450000, "active": true },
+  { "id": "c003", "name": "Valentina Ruiz", "group": "Maternal", "monthlyFee": 420000, "active": true },
+  { "id": "c004", "name": "Emiliano Castro", "group": "Maternal", "monthlyFee": 420000, "active": false },
+  { "id": "c005", "name": "Isabella Torres", "group": "Párvulos", "monthlyFee": 400000, "active": true },
+  { "id": "c006", "name": "Thiago Herrera", "group": "Párvulos", "monthlyFee": 400000, "active": true },
+  { "id": "c007", "name": "Sofía Ramírez", "group": "Pre-jardín", "monthlyFee": 380000, "active": true },
+  { "id": "c008", "name": "Matías Peña", "group": "Pre-jardín", "monthlyFee": 380000, "active": false },
+  { "id": "c009", "name": "Luciana Vargas", "group": "Jardín", "monthlyFee": 360000, "active": true },
+  { "id": "c010", "name": "Santiago Molina", "group": "Jardín", "monthlyFee": 360000, "active": true },
+  { "id": "c011", "name": "Antonia Silva", "group": "Transición", "monthlyFee": 340000, "active": true },
+  { "id": "c012", "name": "Joaquín Reyes", "group": "Transición", "monthlyFee": 340000, "active": true }
+]
