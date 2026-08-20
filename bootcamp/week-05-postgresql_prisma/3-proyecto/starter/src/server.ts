@@ -1,27 +1,21 @@
-// src/server.ts — Entry point del servidor
-// ============================================================
-// TODO: Usar logger.info en lugar de console.log para los mensajes de inicio
-//
-// Pasos:
-//   1. Importar logger desde './config/logger'
-//   2. Reemplazar console.log por logger.info en el callback de app.listen
-//   3. Opcional: cerrar prisma.$disconnect() en el graceful shutdown
-// ============================================================
-
 import { app } from './app';
+import { logger } from './config/logger';
+import { prisma } from './lib/prisma';
 
-const PORT = Number(process.env['PORT']) || 3000;
+const PORT = process.env['PORT'] ?? 3000;
 
-const server = app.listen(PORT, () => {
-  // TODO: reemplazar console.log con logger.info
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📘 Environment: ${process.env['NODE_ENV'] ?? 'development'}`);
+const server = app.listen(Number(PORT), () => {
+  logger.info(`Servidor escuchando en el puerto ${PORT}`);
 });
 
-process.on('SIGTERM', () => {
-  server.close(() => process.exit(0));
-});
+function shutdown(signal: string): void {
+  logger.info(`Señal ${signal} recibida, cerrando servidor...`);
+  server.close(async () => {
+    await prisma.$disconnect();
+    logger.info('Conexiones cerradas. Adiós.');
+    process.exit(0);
+  });
+}
 
-process.on('SIGINT', () => {
-  server.close(() => process.exit(0));
-});
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

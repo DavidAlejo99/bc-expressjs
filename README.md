@@ -14,7 +14,7 @@ Repositorio personal de seguimiento del bootcamp **bc-expressjs** (SENA - Tecnol
 
 ## Sobre el dominio
 
-El sistema modela la operación de un jardín infantil privado. El dominio completo contempla cuatro entidades: **niños**, **padres/acudientes**, **personal (staff)** y **actividades**. El desarrollo se enfoca primero en la entidad `Child`, que representa a cada niño matriculado, y se irá extendiendo a las demás entidades conforme el bootcamp introduzca relaciones y persistencia (semana 05 en adelante, con PostgreSQL y Prisma).
+El sistema modela la operación de un jardín infantil privado. El dominio completo contempla cuatro entidades: **niños**, **padres/acudientes**, **personal (staff)** y **actividades**. El desarrollo se enfoca primero en la entidad `Child`, que representa a cada niño matriculado, y se irá extendiendo a las demás entidades conforme el bootcamp introduzca relaciones y persistencia.
 
 ### Entidad `Child`
 
@@ -25,6 +25,9 @@ El sistema modela la operación de un jardín infantil privado. El dominio compl
 | group | string | Grupo/sala (Sala Cuna, Maternal, Párvulos, Pre-jardín, Jardín, Transición) | Sí |
 | monthlyFee | number | Valor de la mensualidad | Sí |
 | active | boolean | Estado de matrícula (activo/inactivo) | Sí |
+| enrollmentCode | string | Código de matrícula (único, formato PREFIJO-AÑO-CORRELATIVO) | Sí |
+| birthDate | Date | Fecha de nacimiento | Sí |
+| parentId | number | Referencia al acudiente (`Parent`) | No |
 | createdAt | Date | Fecha de registro | No |
 
 ## Arquitectura
@@ -36,11 +39,11 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | Routes | Define los endpoints de la API |
 | Controllers | Maneja las peticiones y respuestas HTTP |
 | Services | Contiene la lógica de negocio y validaciones |
-| Repositories | Accede a los datos (almacenamiento en memoria por ahora) |
+| Repositories | Accede a los datos (Prisma ORM + PostgreSQL desde la semana 05) |
 
-**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging)
+**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05)
 
-### Endpoints implementados (API de niños — semana 04)
+### Endpoints implementados (API de niños — semana 05)
 
 | Método | Endpoint | Descripción | Código de éxito |
 |---|---|---|---|
@@ -56,6 +59,7 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 |---|---|---|
 | 400 Bad Request | Validación fallida (Zod) | Campos obligatorios faltantes o con formato inválido |
 | 404 Not Found | Recurso no encontrado | Niño no existe o ruta incorrecta |
+| 409 Conflict | Campo único duplicado | `enrollmentCode` o `email` ya existen (Prisma P2002) |
 | 500 Internal Server Error | Error interno | Fallo inesperado en el servidor |
 
 ## Progreso semanal
@@ -66,22 +70,27 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | 02 | Introducción a Express — API CRUD en memoria para niños | `bootcamp/week-02-express_intro/3-proyecto` |
 | 03 | Arquitectura REST en capas (Routes → Controllers → Services → Repositories) + paginación | `bootcamp/week-03-rest_api_arquitectura/3-proyecto` |
 | 04 | Validación con Zod, manejo de errores (`AppError`) y logging (Winston/Morgan) | `bootcamp/week-04-validacion_error_handling/3-proyecto` |
-| 05 | PostgreSQL + Prisma (en curso) | `bootcamp/week-05-postgresql_prisma` |
+| 05 | PostgreSQL + Prisma — persistencia real con `Child` y `Parent` (relación 1:N) | `bootcamp/week-05-postgresql_prisma/3-proyecto` |
 
 Cada carpeta de semana contiene su propio `README.md` con el detalle de esa entrega.
 
 ## Cómo ejecutar cada proyecto
 
-Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 04):
+Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 05, requiere Docker):
 
-\`\`\`bash
-cd bootcamp/week-04-validacion_error_handling/3-proyecto/starter
+```bash
+cd bootcamp/week-05-postgresql_prisma/3-proyecto/starter
+cp .env.example .env
+docker compose up -d
 pnpm install
+pnpm prisma migrate dev --name init
+pnpm prisma db seed
 pnpm dev
-\`\`\`
+```
 
 Para compilar y correr en modo producción:
 
-\`\`\`bash
+```bash
 pnpm build
 pnpm start
+​```

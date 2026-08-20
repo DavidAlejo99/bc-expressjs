@@ -1,33 +1,19 @@
-// src/app.ts — Configuración de la aplicación Express
-// ============================================================
-// TODO: Registrar el router de tu recurso
-//
-// 1. Importar el router: import itemsRouter from './routes/items.routes';
-// 2. Registrarlo bajo la ruta correcta para tu dominio:
-//    app.use('/api/v1/books', itemsRouter);    // Biblioteca
-//    app.use('/api/v1/medications', itemsRouter); // Farmacia
-//    app.use('/api/v1/members', itemsRouter);  // Gimnasio
-//    (adapta según tu dominio)
-// ============================================================
-
 import express from 'express';
-import { errorHandler } from './middlewares/errorHandler';
+import { childrenRouter } from './routes/children.routes';
+import { parentsRouter } from './routes/parents.routes';
 import { notFound } from './middlewares/notFound';
+import { errorHandler } from './middlewares/errorHandler';
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.status(200).json({ status: 'ok' });
 });
 
-// TODO: importar y registrar tu router aquí
-// import itemsRouter from './routes/items.routes';
-// app.use('/api/v1/[nombre-recurso]', itemsRouter);
+app.use('/api/v1/children', childrenRouter);
+app.use('/api/v1/parents', parentsRouter);
 
 app.use(notFound);
 app.use(errorHandler);
-
-export { app };

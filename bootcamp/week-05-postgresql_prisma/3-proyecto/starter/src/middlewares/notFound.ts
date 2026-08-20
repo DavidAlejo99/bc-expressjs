@@ -1,5 +1,6 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { AppError } from '../errors/AppError';
 
-export function notFound(req: Request, res: Response): void {
-  res.status(404).json({ status: 'error', message: `Route ${req.method} ${req.path} not found` });
+export function notFound(req: Request, _res: Response, next: NextFunction): void {
+  next(new AppError(404, `Ruta no encontrada: ${req.method} ${req.originalUrl}`));
 }
