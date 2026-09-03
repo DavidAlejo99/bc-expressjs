@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { Product } from '../models/product.model';
+import { Child } from '../models/child.model';
 import { AppError } from '../errors/AppError';
 import { isDuplicateKeyError } from '../lib/mongo-errors';
-import type { CreateProductDto, UpdateProductDto } from '../schemas/product.schema';
+import type { CreateChildDto, UpdateChildDto } from '../schemas/child.schema';
 
 export interface PaginatedResult<T> {
   data: T[];
@@ -19,17 +19,17 @@ export async function findAll(
   const skip = (page - 1) * limit;
   const filter = search ? { name: { $regex: search, $options: 'i' } } : {};
   const [data, total] = await Promise.all([
-    Product.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-    Product.countDocuments(filter),
+    Child.find(filter).populate('parent').sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+    Child.countDocuments(filter),
   ]);
   return { data, total, page, totalPages: Math.ceil(total / limit) };
 }
 
 export async function findById(id: string): Promise<unknown> {
   try {
-    const product = await Product.findById(id).lean();
-    if (!product) throw new AppError(404, 'Producto no encontrado');
-    return product;
+    const child = await Child.findById(id).populate('parent').lean();
+    if (!child) throw new AppError(404, 'Niño no encontrado');
+    return child;
   } catch (err) {
     if (err instanceof AppError) throw err;
     if (err instanceof mongoose.Error.CastError) throw new AppError(400, 'ID inválido');
@@ -37,33 +37,28 @@ export async function findById(id: string): Promise<unknown> {
   }
 }
 
-export async function create(dto: CreateProductDto): Promise<unknown> {
+export async function create(dto: CreateChildDto): Promise<unknown> {
   try {
-    const product = await Product.create(dto);
-    return product.toJSON();
+    const child = await Child.create(dto);
+    return child.toJSON();
   } catch (err) {
     if (isDuplicateKeyError(err)) {
-      const field = Object.keys(err.keyValue ?? {})[0] ?? 'campo';
-      throw new AppError(409, `El ${field} ya está registrado`);
+      throw new AppError(409, 'Ya existe un niño con ese código de matrícula');
     }
     throw err;
   }
 }
 
-export async function update(id: string, dto: UpdateProductDto): Promise<unknown> {
+export async function update(id: string, dto: UpdateChildDto): Promise<unknown> {
   try {
-    const product = await Product.findByIdAndUpdate(id, dto, {
-      new: true,
-      runValidators: true,
-    }).lean();
-    if (!product) throw new AppError(404, 'Producto no encontrado');
-    return product;
+    const child = await Child.findByIdAndUpdate(id, dto, { new: true, runValidators: true }).lean();
+    if (!child) throw new AppError(404, 'Niño no encontrado');
+    return child;
   } catch (err) {
     if (err instanceof AppError) throw err;
     if (err instanceof mongoose.Error.CastError) throw new AppError(400, 'ID inválido');
     if (isDuplicateKeyError(err)) {
-      const field = Object.keys(err.keyValue ?? {})[0] ?? 'campo';
-      throw new AppError(409, `El ${field} ya está registrado`);
+      throw new AppError(409, 'Ya existe un niño con ese código de matrícula');
     }
     throw err;
   }
@@ -71,8 +66,8 @@ export async function update(id: string, dto: UpdateProductDto): Promise<unknown
 
 export async function remove(id: string): Promise<void> {
   try {
-    const product = await Product.findByIdAndDelete(id).lean();
-    if (!product) throw new AppError(404, 'Producto no encontrado');
+    const child = await Child.findByIdAndDelete(id);
+    if (!child) throw new AppError(404, 'Niño no encontrado');
   } catch (err) {
     if (err instanceof AppError) throw err;
     if (err instanceof mongoose.Error.CastError) throw new AppError(400, 'ID inválido');

@@ -1,16 +1,7 @@
-// ============================================
-// PASO 4: Añadir .populate('category') en las queries de lectura
-// ============================================
-//
-// Sin populate: el campo category llega como string ObjectId
-// Con populate: el campo category llega como objeto { _id, name, ... }
-//
-// Descomenta los .populate('category') marcados como PASO 4:
-
-import { MongoServerError } from 'mongodb';
 import mongoose from 'mongoose';
 import { Product } from '../models/product.model';
 import { AppError } from '../errors/AppError';
+import { isDuplicateKeyError } from '../lib/mongo-errors';
 import type { CreateProductDto, UpdateProductDto } from '../schemas/product.schema';
 
 export interface PaginatedResult<T> {
@@ -26,31 +17,26 @@ export async function findAll(
   search?: string,
 ): Promise<PaginatedResult<unknown>> {
   const skip = (page - 1) * limit;
-  const filter = search
-    ? { name: { $regex: search, $options: 'i' } }
-    : {};
-
+  const filter = search ? { name: { $regex: search, $options: 'i' } } : {};
   const [data, total] = await Promise.all([
     Product.find(filter)
-      // .populate('category')   // PASO 4: descomentar para cargar la categoría
+      .populate('category')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean(),
     Product.countDocuments(filter),
   ]);
-
   return { data, total, page, totalPages: Math.ceil(total / limit) };
 }
 
 export async function findById(id: string): Promise<unknown> {
   try {
-    const product = await Product.findById(id)
-      // .populate('category')   // PASO 4: descomentar
-      .lean();
+    const product = await Product.findById(id).populate('category').lean();
     if (!product) throw new AppError(404, 'Producto no encontrado');
     return product;
   } catch (err) {
+    if (err instanceof AppError) throw err;
     if (err instanceof mongoose.Error.CastError) throw new AppError(400, 'ID inválido');
     throw err;
   }
@@ -61,7 +47,7 @@ export async function create(dto: CreateProductDto): Promise<unknown> {
     const product = await Product.create(dto);
     return product.toJSON();
   } catch (err) {
-    if (err instanceof MongoServerError && err.code === 11000) {
+    if (isDuplicateKeyError(err)) {
       const field = Object.keys(err.keyValue ?? {})[0] ?? 'campo';
       throw new AppError(409, `El ${field} ya está registrado`);
     }
@@ -78,8 +64,9 @@ export async function update(id: string, dto: UpdateProductDto): Promise<unknown
     if (!product) throw new AppError(404, 'Producto no encontrado');
     return product;
   } catch (err) {
+    if (err instanceof AppError) throw err;
     if (err instanceof mongoose.Error.CastError) throw new AppError(400, 'ID inválido');
-    if (err instanceof MongoServerError && err.code === 11000) {
+    if (isDuplicateKeyError(err)) {
       const field = Object.keys(err.keyValue ?? {})[0] ?? 'campo';
       throw new AppError(409, `El ${field} ya está registrado`);
     }
@@ -92,6 +79,7 @@ export async function remove(id: string): Promise<void> {
     const product = await Product.findByIdAndDelete(id).lean();
     if (!product) throw new AppError(404, 'Producto no encontrado');
   } catch (err) {
+    if (err instanceof AppError) throw err;
     if (err instanceof mongoose.Error.CastError) throw new AppError(400, 'ID inválido');
     throw err;
   }

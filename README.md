@@ -39,11 +39,11 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | Routes | Define los endpoints de la API |
 | Controllers | Maneja las peticiones y respuestas HTTP |
 | Services | Contiene la lógica de negocio y validaciones |
-| Repositories | Accede a los datos (Prisma ORM + PostgreSQL desde la semana 05) |
+| Repositories | Accede a los datos (Prisma ORM + PostgreSQL desde la semana 05; Mongoose + MongoDB desde la semana 06) |
 
-**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05)
+**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05) · MongoDB + Mongoose (semana 06)
 
-### Endpoints implementados (API de niños — semana 05)
+### Endpoints implementados (API de niños)
 
 | Método | Endpoint | Descripción | Código de éxito |
 |---|---|---|---|
@@ -59,32 +59,32 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 |---|---|---|
 | 400 Bad Request | Validación fallida (Zod) | Campos obligatorios faltantes o con formato inválido |
 | 404 Not Found | Recurso no encontrado | Niño no existe o ruta incorrecta |
-| 409 Conflict | Campo único duplicado | `enrollmentCode` o `email` ya existen (Prisma P2002) |
+| 409 Conflict | Campo único duplicado | `enrollmentCode` o `email` ya existen (Prisma P2002 / MongoDB 11000) |
 | 500 Internal Server Error | Error interno | Fallo inesperado en el servidor |
 
 ## Progreso semanal
 
 | Semana | Contenido | Carpeta |
 |---|---|---|
-| 01 | Fundamentos de Node.js — CLI que lee `children.json`, genera resumen y filtra por grupo | `bootcamp/week-01-nodejs_fundamentals/3-proyecto` |
+| 01 | Fundamentos de Node.js — CLI que lee `children.json`, genera resumen y filtra por grupo | `bootcamp/week-01-nodejs_fundamentals/3-proyecto`|
 | 02 | Introducción a Express — API CRUD en memoria para niños | `bootcamp/week-02-express_intro/3-proyecto` |
 | 03 | Arquitectura REST en capas (Routes → Controllers → Services → Repositories) + paginación | `bootcamp/week-03-rest_api_arquitectura/3-proyecto` |
 | 04 | Validación con Zod, manejo de errores (`AppError`) y logging (Winston/Morgan) | `bootcamp/week-04-validacion_error_handling/3-proyecto` |
 | 05 | PostgreSQL + Prisma — persistencia real con `Child` y `Parent` (relación 1:N) | `bootcamp/week-05-postgresql_prisma/3-proyecto` |
+| 06 | MongoDB + Mongoose — mismo dominio `Child`/`Parent` sobre una base de datos NoSQL, con `populate` para las relaciones | `bootcamp/week-06-mongodb_mongoose/3-proyecto` |
 
 Cada carpeta de semana contiene su propio `README.md` con el detalle de esa entrega.
 
 ## Cómo ejecutar cada proyecto
 
-Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 05, requiere Docker):
+Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 06, requiere Docker):
 
 ```bash
-cd bootcamp/week-05-postgresql_prisma/3-proyecto/starter
+cd bootcamp/week-06-mongodb_mongoose/3-proyecto/starter
 cp .env.example .env
 docker compose up -d
 pnpm install
-pnpm prisma migrate dev --name init
-pnpm prisma db seed
+pnpm run seed
 pnpm dev
 ```
 
@@ -93,4 +93,4 @@ Para compilar y correr en modo producción:
 ```bash
 pnpm build
 pnpm start
-​```
+```

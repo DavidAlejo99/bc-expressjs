@@ -1,6 +1,6 @@
-import { MongoServerError } from 'mongodb';
 import { Category } from '../models/category.model';
 import { AppError } from '../errors/AppError';
+import { isDuplicateKeyError } from '../lib/mongo-errors';
 import type { CreateCategoryDto, UpdateCategoryDto } from '../schemas/category.schema';
 
 export async function findAll(): Promise<unknown[]> {
@@ -18,7 +18,7 @@ export async function create(dto: CreateCategoryDto): Promise<unknown> {
     const category = await Category.create(dto);
     return category.toJSON();
   } catch (err) {
-    if (err instanceof MongoServerError && err.code === 11000) {
+    if (isDuplicateKeyError(err)) {
       throw new AppError(409, 'Ya existe una categoría con ese nombre');
     }
     throw err;

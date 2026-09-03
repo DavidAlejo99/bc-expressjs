@@ -1,63 +1,28 @@
-// ============================================
-// SEED — Insertar datos de prueba
-// TODO: Adaptar nombres y datos a tu dominio
-// ============================================
-//
-// REGLA IMPORTANTE: Insertar la entidad SECUNDARIA primero,
-// luego la PRINCIPAL usando los _id de la secundaria.
-//
-// Ejemplo para Biblioteca:
-//   Paso A: Insertar Authors → obtener _id
-//   Paso B: Insertar Books con author: author._id
-
 import 'dotenv/config';
 import { connectDB, disconnectDB } from './lib/mongoose';
-import { Secondary } from './models/secondary.model';
-import { Primary } from './models/primary.model';
+import { Parent } from './models/parent.model';
+import { Child } from './models/child.model';
 
 async function seed(): Promise<void> {
   await connectDB();
 
-  // TODO: Limpiar colecciones (orden inverso: primary primero, luego secondary)
-  await Primary.deleteMany({});
-  await Secondary.deleteMany({});
+  await Child.deleteMany({});
+  await Parent.deleteMany({});
   console.log('Collections cleared');
 
-  // TODO: Paso A — Insertar entidades secundarias y capturar _id
-  // Adapta los datos a tu dominio:
-  const [item1, item2, item3] = await Secondary.insertMany([
-    { name: 'Secundaria 1' },  // TODO: reemplazar con datos reales de tu dominio
-    { name: 'Secundaria 2' },
-    { name: 'Secundaria 3' },
+  const [laura, carlos] = await Parent.insertMany([
+    { fullName: 'Laura Gómez', email: 'laura.gomez@example.com', phone: '3001234567' },
+    { fullName: 'Carlos Ramírez', email: 'carlos.ramirez@example.com', phone: '3009876543' },
   ]);
-  console.log('Secondary entities inserted');
+  console.log('Parents inserted');
 
-  // TODO: Paso B — Insertar entidades principales referenciando los _id
-  // Adapta los campos y valores a tu dominio:
-  await Primary.insertMany([
-    {
-      name: 'Principal 1',          // TODO: campo real de tu dominio
-      secondary: item1._id,         // TODO: renombrar 'secondary' al campo real
-      // price: 100,                // TODO: añadir campos de tu dominio
-    },
-    {
-      name: 'Principal 2',
-      secondary: item1._id,
-    },
-    {
-      name: 'Principal 3',
-      secondary: item2._id,
-    },
-    {
-      name: 'Principal 4',
-      secondary: item3._id,
-    },
-    {
-      name: 'Principal 5',
-      secondary: item2._id,
-    },
+  await Child.insertMany([
+    { name: 'Sofía Gómez', enrollmentCode: 'JI-2026-001', group: 'Maternal', monthlyFee: 350000, active: true, birthDate: new Date('2023-04-12'), parent: laura._id },
+    { name: 'Mateo Gómez', enrollmentCode: 'JI-2026-002', group: 'Párvulos', monthlyFee: 380000, active: true, birthDate: new Date('2022-01-20'), parent: laura._id },
+    { name: 'Valentina Ramírez', enrollmentCode: 'JI-2026-003', group: 'Jardín', monthlyFee: 420000, active: true, birthDate: new Date('2021-08-05'), parent: carlos._id },
+    { name: 'Samuel Ramírez', enrollmentCode: 'JI-2026-004', group: 'Transición', monthlyFee: 450000, active: false, birthDate: new Date('2020-11-30'), parent: carlos._id },
   ]);
-  console.log('Primary entities inserted');
+  console.log('Children inserted');
 
   console.log('Seed completed successfully');
   await disconnectDB();
