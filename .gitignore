@@ -134,3 +134,4 @@ docker-compose.override.yml
 
 uploads/
 public/uploads/
+cookies.txt

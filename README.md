@@ -1,6 +1,6 @@
 # Jardín Infantil — Bootcamp bc-expressjs
 
-Repositorio personal de seguimiento del bootcamp **bc-expressjs** (SENA - Tecnología en Análisis y Desarrollo de Software). Cada semana se implementa un ejercicio y un proyecto aplicados a un mismo dominio de negocio, evolucionando en complejidad: de un script en Node.js puro hasta una API REST completa con Express, TypeScript, validación, manejo de errores y persistencia en base de datos.
+Repositorio personal de seguimiento del bootcamp **bc-expressjs** (SENA - Tecnología en Análisis y Desarrollo de Software). Cada semana se implementa un ejercicio y un proyecto aplicados a un mismo dominio de negocio, evolucionando en complejidad: de un script en Node.js puro hasta una API REST completa con Express, TypeScript, validación, manejo de errores, persistencia en base de datos y autenticación.
 
 ## Autor
 
@@ -14,7 +14,7 @@ Repositorio personal de seguimiento del bootcamp **bc-expressjs** (SENA - Tecnol
 
 ## Sobre el dominio
 
-El sistema modela la operación de un jardín infantil privado. El dominio completo contempla cuatro entidades: **niños**, **padres/acudientes**, **personal (staff)** y **actividades**. El desarrollo se enfoca primero en la entidad `Child`, que representa a cada niño matriculado, y se irá extendiendo a las demás entidades conforme el bootcamp introduzca relaciones y persistencia.
+El sistema modela la operación de un jardín infantil privado. El dominio completo contempla cuatro entidades: **niños**, **padres/acudientes**, **personal (staff)** y **actividades**. El desarrollo se enfoca primero en la entidad `Child`, que representa a cada niño matriculado, y se irá extendiendo a las demás entidades conforme el bootcamp introduzca relaciones, persistencia y autenticación.
 
 ### Entidad `Child`
 
@@ -28,6 +28,7 @@ El sistema modela la operación de un jardín infantil privado. El dominio compl
 | enrollmentCode | string | Código de matrícula (único, formato PREFIJO-AÑO-CORRELATIVO) | Sí |
 | birthDate | Date | Fecha de nacimiento | Sí |
 | parentId | number | Referencia al acudiente (`Parent`) | No |
+| createdBy | ObjectId | Referencia al `User` (staff) que lo registró — desde la semana 07 | No |
 | createdAt | Date | Fecha de registro | No |
 
 ## Arquitectura
@@ -41,7 +42,9 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | Services | Contiene la lógica de negocio y validaciones |
 | Repositories | Accede a los datos (Prisma ORM + PostgreSQL desde la semana 05; Mongoose + MongoDB desde la semana 06) |
 
-**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05) · MongoDB + Mongoose (semana 06)
+Desde la semana 07, las rutas de niños están protegidas con autenticación JWT (access + refresh token con rotación, cookies HttpOnly).
+
+**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05) · MongoDB + Mongoose (semana 06) · JWT + bcrypt (semana 07)
 
 ### Endpoints implementados (API de niños)
 
@@ -58,6 +61,7 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | Código | Descripción | Escenario |
 |---|---|---|
 | 400 Bad Request | Validación fallida (Zod) | Campos obligatorios faltantes o con formato inválido |
+| 401 Unauthorized | No autenticado | Token ausente, inválido o expirado (desde la semana 07) |
 | 404 Not Found | Recurso no encontrado | Niño no existe o ruta incorrecta |
 | 409 Conflict | Campo único duplicado | `enrollmentCode` o `email` ya existen (Prisma P2002 / MongoDB 11000) |
 | 500 Internal Server Error | Error interno | Fallo inesperado en el servidor |
@@ -72,19 +76,23 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | 04 | Validación con Zod, manejo de errores (`AppError`) y logging (Winston/Morgan) | `bootcamp/week-04-validacion_error_handling/3-proyecto` |
 | 05 | PostgreSQL + Prisma — persistencia real con `Child` y `Parent` (relación 1:N) | `bootcamp/week-05-postgresql_prisma/3-proyecto` |
 | 06 | MongoDB + Mongoose — mismo dominio `Child`/`Parent` sobre una base de datos NoSQL, con `populate` para las relaciones | `bootcamp/week-06-mongodb_mongoose/3-proyecto` |
+| 07 | Autenticación JWT — registro/login con bcrypt, access + refresh token con rotación, rutas de `Child` protegidas | `bootcamp/week-07-autenticacion_jwt/3-proyecto` |
 
 Cada carpeta de semana contiene su propio `README.md` con el detalle de esa entrega.
 
 ## Cómo ejecutar cada proyecto
 
-Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 06, requiere Docker):
+Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 07, requiere Docker):
 
 ```bash
-cd bootcamp/week-06-mongodb_mongoose/3-proyecto/starter
+cd bootcamp/week-07-autenticacion_jwt/3-proyecto/starter
 cp .env.example .env
+# Generar dos secretos DISTINTOS y pegarlos en .env:
+openssl rand -base64 64   # JWT_ACCESS_SECRET
+openssl rand -base64 64   # JWT_REFRESH_SECRET
 docker compose up -d
 pnpm install
-pnpm run seed
+pnpm approve-builds
 pnpm dev
 ```
 
