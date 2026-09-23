@@ -91,6 +91,13 @@ Desde la semana 07, las rutas de niños están protegidas con autenticación JWT
 
 Cada carpeta de semana contiene su propio `README.md` con el detalle de esa entrega.
 
+> **Nota sobre el historial de commits:** las semanas 01 a 04 quedaron agrupadas
+> en el commit inicial del repositorio (`Initial commit - Proyecto Jardín
+> Infantil`), antes de adoptar la convención de un commit `Semana 0X` por
+> entrega. El código de esas 4 semanas está completo y funcional — solo no
+> quedó separado por commit individual. A partir de la semana 05, cada semana
+> tiene su propio commit `Semana 0X`.
+
 ## Cómo ejecutar cada proyecto
 
 Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 08, requiere Docker):
