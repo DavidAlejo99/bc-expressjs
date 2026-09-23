@@ -16,30 +16,26 @@ export interface TokenPayload {
   role: UserRole;
 }
 
-// ============================================================
-// Adaptar estos tipos al dominio asignado
-// Ejemplos:
-//   Biblioteca  → CreateBookDto, UpdateBookDto
-//   Farmacia    → CreateMedicineDto, UpdateMedicineDto
-//   Gimnasio    → CreateMemberDto, UpdateMemberDto
-// ============================================================
+export type ChildGroup =
+  | 'Sala Cuna'
+  | 'Maternal'
+  | 'Párvulos'
+  | 'Pre-jardín'
+  | 'Jardín'
+  | 'Transición';
 
-export interface CreateItemDto {
-  // TODO: Adaptar al dominio asignado
-  // Ejemplo biblioteca:
-  //   title: string;
-  //   isbn: string;
-  //   authorId: string;
-  // Ejemplo farmacia:
-  //   name: string;
-  //   activeIngredient: string;
-  //   stock: number;
+export interface CreateChildDto {
   name: string;
-  description?: string;
+  enrollmentCode: string;
+  group: ChildGroup;
+  monthlyFee: number;
+  birthDate: Date;
 }
 
-export interface UpdateItemDto {
-  // TODO: Adaptar al dominio asignado (todos los campos opcionales en update)
+export interface UpdateChildDto {
   name?: string;
-  description?: string;
+  group?: ChildGroup;
+  monthlyFee?: number;
+  birthDate?: Date;
+  active?: boolean;
 }

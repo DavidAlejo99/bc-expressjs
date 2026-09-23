@@ -6,6 +6,9 @@ const config: Config = {
   testMatch: ['**/__tests__/**/*.test.ts', '**/*.spec.ts'],
   testTimeout: 30000,
   clearMocks: true,
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+  },
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/server.ts',

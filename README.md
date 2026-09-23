@@ -49,9 +49,9 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | Services | Contiene la lógica de negocio y validaciones |
 | Repositories | Accede a los datos (Prisma ORM + PostgreSQL desde la semana 05; Mongoose + MongoDB desde la semana 06) |
 
-Desde la semana 07, las rutas de niños están protegidas con autenticación JWT (access + refresh token con rotación, cookies HttpOnly). Desde la semana 08, se suma una capa de autorización por roles (RBAC) y seguridad HTTP: Helmet, rate limiting, CORS con whitelist y sanitización contra NoSQL injection.
+Desde la semana 07, las rutas de niños están protegidas con autenticación JWT (access + refresh token con rotación, cookies HttpOnly). Desde la semana 08, se suma una capa de autorización por roles (RBAC) y seguridad HTTP: Helmet, rate limiting, CORS con whitelist y sanitización contra NoSQL injection. Desde la semana 09, cada proyecto cuenta con una suite de pruebas automatizadas (Jest + Supertest) que cubre la lógica de negocio en aislamiento y los endpoints end-to-end contra una base de datos en memoria.
 
-**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05) · MongoDB + Mongoose (semana 06) · JWT + bcrypt (semana 07) · RBAC + Helmet + CORS + rate limiting (semana 08)
+**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05) · MongoDB + Mongoose (semana 06) · JWT + bcrypt (semana 07) · RBAC + Helmet + CORS + rate limiting (semana 08) · Jest + Supertest + mongodb-memory-server (semana 09)
 
 ### Endpoints implementados (API de niños)
 
@@ -87,6 +87,7 @@ Desde la semana 07, las rutas de niños están protegidas con autenticación JWT
 | 06 | MongoDB + Mongoose — mismo dominio `Child`/`Parent` sobre una base de datos NoSQL, con `populate` para las relaciones | `bootcamp/week-06-mongodb_mongoose/3-proyecto` |
 | 07 | Autenticación JWT — registro/login con bcrypt, access + refresh token con rotación, rutas de `Child` protegidas | `bootcamp/week-07-autenticacion_jwt/3-proyecto` |
 | 08 | Autorización y Seguridad — RBAC (`requireRole`), Helmet, rate limiting, CORS con whitelist, sanitización NoSQL | `bootcamp/week-08-autorizacion_seguridad/3-proyecto` |
+| 09 | Testing — Jest + Supertest: pruebas unitarias (servicios, middlewares) y de integración (rutas end-to-end con `mongodb-memory-server`), cobertura ≥90% stmts / ≥90% branch | `bootcamp/week-09-testing/3-proyecto` |
 
 Cada carpeta de semana contiene su propio `README.md` con el detalle de esa entrega.
 
@@ -111,4 +112,17 @@ Para compilar y correr en modo producción:
 ```bash
 pnpm build
 pnpm start
+```
+
+## Cómo correr las pruebas (semana 09)
+
+La suite de tests no requiere Docker ni variables de entorno: usa
+`mongodb-memory-server` para levantar una base MongoDB en memoria en cada
+corrida.
+
+```bash
+cd bootcamp/week-09-testing/3-proyecto/starter
+pnpm install
+pnpm test              # correr toda la suite
+pnpm test:coverage     # correr con reporte de cobertura
 ```
