@@ -1,9 +1,12 @@
+name: bc-week08-proyecto
+
 services:
   mongo:
     image: mongo:7
-    container_name: proyecto-semana-08-mongo
+    container_name: bc-week08-proyecto-mongo
+    restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "27021:27017"
     volumes:
       - proyecto-mongo-data:/data/db
 

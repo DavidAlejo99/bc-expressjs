@@ -3,7 +3,7 @@ import { register, login, refresh, logout, me } from '../controllers/auth.contro
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import { authLimiter } from '../config/security.js';
 
-const router = Router();
+const router: Router = Router();
 
 router.post('/register', authLimiter, register);
 router.post('/login', authLimiter, login);

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { findAllUsers } from '../repositories/users.repository.js';
+import type { IUser } from '../models/user.model.js';
 import { AppError } from '../errors/AppError.js';
 
 // listUsers — only accessible with role 'admin'
@@ -27,8 +28,8 @@ export async function getStats(req: Request, res: Response, next: NextFunction):
     const stats = {
       totalUsers: users.length,
       byRole: {
-        admin: users.filter((u) => u.role === 'admin').length,
-        user: users.filter((u) => u.role === 'user').length,
+        admin: users.filter((u: IUser) => u.role === 'admin').length,
+        user: users.filter((u: IUser) => u.role === 'user').length,
       },
     };
 

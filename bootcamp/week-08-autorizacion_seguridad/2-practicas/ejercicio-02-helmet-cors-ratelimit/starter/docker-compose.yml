@@ -1,11 +1,14 @@
+name: bc-week08-ej02
+
 services:
   mongo:
     image: mongo:7
-    container_name: security-ejercicio-mongo
+    container_name: bc-week08-ej02-mongo
+    restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "27023:27017"
     volumes:
-      - security-mongo-data:/data/db
+      - ej02-mongo-data:/data/db
 
 volumes:
-  security-mongo-data:
+  ej02-mongo-data:

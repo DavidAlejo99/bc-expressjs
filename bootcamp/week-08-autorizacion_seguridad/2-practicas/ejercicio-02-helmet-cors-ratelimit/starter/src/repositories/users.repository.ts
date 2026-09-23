@@ -8,6 +8,10 @@ export async function findUserById(id: string): Promise<IUser | null> {
   return User.findById(id);
 }
 
+export async function findUserByIdWithRefreshToken(id: string): Promise<IUser | null> {
+  return User.findById(id).select('+refreshToken');
+}
+
 export async function createUser(data: {
   name: string;
   email: string;
@@ -18,7 +22,7 @@ export async function createUser(data: {
 
 export async function updateRefreshToken(
   userId: string,
-  refreshToken: string | null
+  hashedRefreshToken: string | null
 ): Promise<void> {
-  await User.findByIdAndUpdate(userId, { refreshToken });
+  await User.findByIdAndUpdate(userId, { refreshToken: hashedRefreshToken });
 }

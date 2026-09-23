@@ -31,6 +31,13 @@ El sistema modela la operación de un jardín infantil privado. El dominio compl
 | createdBy | ObjectId | Referencia al `User` (staff) que lo registró — desde la semana 07 | No |
 | createdAt | Date | Fecha de registro | No |
 
+### Roles del personal (`User`) — desde la semana 08
+
+| Rol | Descripción |
+|---|---|
+| `staff` | Educadora/profesor. Puede crear niños y editar únicamente los que registró. |
+| `admin` | Director/a del jardín. Acceso total, incluida la eliminación de registros. |
+
 ## Arquitectura
 
 Desde la semana 03, la API sigue una arquitectura en 4 capas:
@@ -42,9 +49,9 @@ Desde la semana 03, la API sigue una arquitectura en 4 capas:
 | Services | Contiene la lógica de negocio y validaciones |
 | Repositories | Accede a los datos (Prisma ORM + PostgreSQL desde la semana 05; Mongoose + MongoDB desde la semana 06) |
 
-Desde la semana 07, las rutas de niños están protegidas con autenticación JWT (access + refresh token con rotación, cookies HttpOnly).
+Desde la semana 07, las rutas de niños están protegidas con autenticación JWT (access + refresh token con rotación, cookies HttpOnly). Desde la semana 08, se suma una capa de autorización por roles (RBAC) y seguridad HTTP: Helmet, rate limiting, CORS con whitelist y sanitización contra NoSQL injection.
 
-**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05) · MongoDB + Mongoose (semana 06) · JWT + bcrypt (semana 07)
+**Tecnologías:** Node.js 22 · TypeScript 5 (strict) · Express 5 · pnpm 10 · Zod v4 (validación) · Winston + Morgan (logging) · PostgreSQL + Prisma (semana 05) · MongoDB + Mongoose (semana 06) · JWT + bcrypt (semana 07) · RBAC + Helmet + CORS + rate limiting (semana 08)
 
 ### Endpoints implementados (API de niños)
 
@@ -62,8 +69,10 @@ Desde la semana 07, las rutas de niños están protegidas con autenticación JWT
 |---|---|---|
 | 400 Bad Request | Validación fallida (Zod) | Campos obligatorios faltantes o con formato inválido |
 | 401 Unauthorized | No autenticado | Token ausente, inválido o expirado (desde la semana 07) |
+| 403 Forbidden | No autorizado | Rol insuficiente, o intento de editar/eliminar un recurso ajeno (desde la semana 08) |
 | 404 Not Found | Recurso no encontrado | Niño no existe o ruta incorrecta |
 | 409 Conflict | Campo único duplicado | `enrollmentCode` o `email` ya existen (Prisma P2002 / MongoDB 11000) |
+| 429 Too Many Requests | Rate limit excedido | Más de 100 req/15min globales, o más de 5 intentos/15min en login/registro |
 | 500 Internal Server Error | Error interno | Fallo inesperado en el servidor |
 
 ## Progreso semanal
@@ -77,15 +86,16 @@ Desde la semana 07, las rutas de niños están protegidas con autenticación JWT
 | 05 | PostgreSQL + Prisma — persistencia real con `Child` y `Parent` (relación 1:N) | `bootcamp/week-05-postgresql_prisma/3-proyecto` |
 | 06 | MongoDB + Mongoose — mismo dominio `Child`/`Parent` sobre una base de datos NoSQL, con `populate` para las relaciones | `bootcamp/week-06-mongodb_mongoose/3-proyecto` |
 | 07 | Autenticación JWT — registro/login con bcrypt, access + refresh token con rotación, rutas de `Child` protegidas | `bootcamp/week-07-autenticacion_jwt/3-proyecto` |
+| 08 | Autorización y Seguridad — RBAC (`requireRole`), Helmet, rate limiting, CORS con whitelist, sanitización NoSQL | `bootcamp/week-08-autorizacion_seguridad/3-proyecto` |
 
 Cada carpeta de semana contiene su propio `README.md` con el detalle de esa entrega.
 
 ## Cómo ejecutar cada proyecto
 
-Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 07, requiere Docker):
+Cada semana tiene su propio `package.json` dentro de `3-proyecto/starter`. Para correr la versión más reciente (semana 08, requiere Docker):
 
 ```bash
-cd bootcamp/week-07-autenticacion_jwt/3-proyecto/starter
+cd bootcamp/week-08-autorizacion_seguridad/3-proyecto/starter
 cp .env.example .env
 # Generar dos secretos DISTINTOS y pegarlos en .env:
 openssl rand -base64 64   # JWT_ACCESS_SECRET

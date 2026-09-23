@@ -13,7 +13,7 @@ export interface JwtPayload {
   // El role debe viajar en el token para que requireRole()
   // pueda verificarlo SIN consultar la base de datos en
   // cada request. Descomenta la siguiente línea:
-  // role: string;
+  role: string;
 }
 
 // ============================================

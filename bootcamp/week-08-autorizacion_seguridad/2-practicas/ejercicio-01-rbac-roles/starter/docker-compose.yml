@@ -1,11 +1,14 @@
+name: bc-week08-ej01
+
 services:
   mongo:
     image: mongo:7
-    container_name: rbac-ejercicio-mongo
+    container_name: bc-week08-ej01-mongo
+    restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "27022:27017"
     volumes:
-      - rbac-mongo-data:/data/db
+      - ej01-mongo-data:/data/db
 
 volumes:
-  rbac-mongo-data:
+  ej01-mongo-data:
